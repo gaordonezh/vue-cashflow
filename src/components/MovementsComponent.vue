@@ -16,8 +16,8 @@
 </template>
 
 <script setup>
-import { toRefs, defineProps } from "vue";
-import SingleMovementComponent from "./SingleMovementComponent.vue";
+import { toRefs, defineProps, defineEmits } from 'vue';
+import SingleMovementComponent from './SingleMovementComponent.vue';
 
 const props = defineProps({
   movements: {
@@ -27,9 +27,9 @@ const props = defineProps({
 });
 const { movements } = toRefs(props);
 
-const remove = (id) => {
-  console.log(id);
-};
+const emit = defineEmits('remove');
+
+const remove = (id) => emit('remove', id);
 </script>
 
 <style scoped>

@@ -1,16 +1,26 @@
 <template>
   <button @click="showModal = true">Agregar movimiento</button>
   <teleport to="#app">
-    <Modal v-if="showModal" @close="showModal = false">
-      <form-component @close="showModal = false" />
+    <Modal
+      v-if="showModal"
+      @close="showModal = false"
+    >
+      <form-component
+        @close="showModal = false"
+        @create="create"
+      />
     </Modal>
   </teleport>
 </template>
 
 <script setup>
-import { ref } from "vue";
-import Modal from "./ModalComponent.vue";
-import FormComponent from "./FormComponent.vue";
+import { ref, defineEmits } from 'vue';
+import Modal from './ModalComponent.vue';
+import FormComponent from './FormComponent.vue';
+
+const emit = defineEmits('create');
+
+const create = (data) => emit('create', data);
 
 const showModal = ref(false);
 </script>
@@ -55,7 +65,7 @@ textarea {
   padding: 8px;
 }
 
-input[type="number"] {
+input[type='number'] {
   text-align: right;
 }
 
@@ -70,7 +80,7 @@ input[type="number"] {
   margin-left: 8px;
 }
 
-input[type="radio"] {
+input[type='radio'] {
   appearance: none;
   width: 1.24rem;
   height: 1.24rem;
@@ -79,7 +89,7 @@ input[type="radio"] {
   border-radius: 50%;
 }
 
-input[type="radio"]:checked {
+input[type='radio']:checked {
   background-color: var(--brand-blue);
 }
 </style>

@@ -5,28 +5,35 @@
     </template>
     <template #resume>
       <resume-component
-        :label="'Ahorro total'"
+        :total-label="'Ahorro total'"
+        :label="label"
         :totalAmount="100000"
         :amount="amount"
       >
-        <template #graphic>GRAPHIC</template>
+        <template #graphic>
+          <graphic-component :amounts="amounts" />
+        </template>
         <template #action>
-          <action-component />
+          <action-component @create="create" />
         </template>
       </resume-component>
     </template>
     <template #movements>
-      <movements-component :movements="movements" />
+      <movements-component
+        :movements="movements"
+        @remove="remove"
+      />
     </template>
   </layout-component>
 </template>
 
 <script>
-import HeaderComponent from "./HeaderComponent.vue";
-import LayoutComponent from "./LayoutComponent.vue";
-import ResumeComponent from "./ResumeComponent.vue";
-import MovementsComponent from "./MovementsComponent.vue";
-import ActionComponent from "./ActionComponent.vue";
+import HeaderComponent from './HeaderComponent.vue';
+import LayoutComponent from './LayoutComponent.vue';
+import ResumeComponent from './ResumeComponent.vue';
+import MovementsComponent from './MovementsComponent.vue';
+import ActionComponent from './ActionComponent.vue';
+import GraphicComponent from './GraphicComponent.vue';
 
 export default {
   components: {
@@ -35,6 +42,7 @@ export default {
     ResumeComponent,
     MovementsComponent,
     ActionComponent,
+    GraphicComponent,
   },
   data() {
     return {
@@ -43,66 +51,38 @@ export default {
       movements: [
         {
           id: 1,
-          title: "Movimiento",
-          description: "Deposito de salario",
-          amount: 1000,
-        },
-        {
-          id: 2,
-          title: "Movimiento 1",
-          description: "Deposito de honorarios",
-          amount: 500,
-        },
-        {
-          id: 3,
-          title: "Movimiento 3",
-          description: "Comida",
-          amount: -100,
-        },
-        {
-          id: 4,
-          title: "Movimiento 4",
-          description: "Colegiatura",
-          amount: 1000,
-        },
-        {
-          id: 5,
-          title: "Movimiento 5",
-          description: "Reparación equipo",
-          amount: 1000,
-        },
-        {
-          id: 6,
-          title: "Movimiento",
-          description: "Deposito de salario",
-          amount: 1000,
-        },
-        {
-          id: 7,
-          title: "Movimiento 1",
-          description: "Deposito de honorarios",
-          amount: 500,
-        },
-        {
-          id: 8,
-          title: "Movimiento 3",
-          description: "Comida",
-          amount: -100,
-        },
-        {
-          id: 9,
-          title: "Movimiento 4",
-          description: "Colegiatura",
-          amount: 1000,
-        },
-        {
-          id: 10,
-          title: "Movimiento 5",
-          description: "Reparación equipo",
-          amount: 1000,
+          title: 'Movimiento',
+          description: 'Deposito de salario',
+          amount: 100,
+          date: new Date(),
         },
       ],
     };
+  },
+  computed: {
+    amounts() {
+      const lastDays = this.movements
+        .filter((item) => {
+          const today = new Date();
+          const oldDate = today.setDate(today.getDate() - 30);
+          return item.date >= oldDate;
+        })
+        .map((item) => item.amount);
+
+      return lastDays.map((m, i) => {
+        const lastMovements = lastDays.slice(0, i);
+        return lastMovements.reduce((suma, movement) => (suma += movement), 0);
+      });
+    },
+  },
+  methods: {
+    create(movement) {
+      this.movements.push(movement);
+    },
+    remove(id) {
+      const index = this.movements.findIndex((item) => item.id === id);
+      this.movements.splice(index, 1);
+    },
   },
 };
 </script>

@@ -2,23 +2,40 @@
   <form @submit.prevent="submitForm">
     <div class="field">
       <label>Título</label>
-      <input type="text" v-model="title" />
+      <input
+        type="text"
+        v-model="title"
+      />
     </div>
     <div class="field">
       <label>Monto</label>
-      <input type="number" v-model="amount" />
+      <input
+        type="number"
+        v-model="amount"
+      />
     </div>
     <div class="field">
       <label>Descripción</label>
-      <textarea rows="4" v-model="description"></textarea>
+      <textarea
+        rows="4"
+        v-model="description"
+      />
     </div>
     <div class="field">
       <label class="radio-label">
-        <input type="radio" v-model="movementType" value="Ingreso" />
+        <input
+          type="radio"
+          v-model="movementType"
+          value="Ingreso"
+        />
         <span>Ingreso</span>
       </label>
       <label class="radio-label">
-        <input type="radio" v-model="movementType" value="Gasto" />
+        <input
+          type="radio"
+          v-model="movementType"
+          value="Gasto"
+        />
         <span>Gasto</span>
       </label>
     </div>
@@ -29,18 +46,24 @@
 </template>
 
 <script setup>
-import { ref, defineEmits } from "vue";
+import { ref, defineEmits } from 'vue';
 
-const emit = defineEmits(["close"]);
+const emit = defineEmits(['close', 'create']);
 
-const title = ref("");
+const title = ref('');
 const amount = ref(null);
-const description = ref("");
-const movementType = ref("Ingreso");
+const description = ref('');
+const movementType = ref('Ingreso');
 
-const submitForm = (event) => {
-  console.log(event);
-  emit("close");
+const submitForm = () => {
+  emit('close');
+  emit('create', {
+    id: new Date(),
+    title: title.value,
+    description: description.value,
+    amount: movementType.value === 'Ingreso' ? amount.value : -amount.value,
+    date: new Date(),
+  });
 };
 </script>
 
@@ -84,7 +107,7 @@ textarea {
   padding: 8px;
 }
 
-input[type="number"] {
+input[type='number'] {
   text-align: right;
 }
 
@@ -99,7 +122,7 @@ input[type="number"] {
   margin-left: 8px;
 }
 
-input[type="radio"] {
+input[type='radio'] {
   appearance: none;
   width: 1.24rem;
   height: 1.24rem;
@@ -108,7 +131,7 @@ input[type="radio"] {
   border-radius: 50%;
 }
 
-input[type="radio"]:checked {
+input[type='radio']:checked {
   background-color: var(--brand-blue);
 }
 </style>
