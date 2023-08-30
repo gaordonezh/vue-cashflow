@@ -7,11 +7,14 @@
       <resume-component
         :total-label="'Ahorro total'"
         :label="label"
-        :totalAmount="100000"
+        :totalAmount="totalAmount"
         :amount="amount"
       >
         <template #graphic>
-          <graphic-component :amounts="amounts" />
+          <graphic-component
+            :amounts="amounts"
+            @select="select"
+          />
         </template>
         <template #action>
           <action-component @create="create" />
@@ -48,15 +51,7 @@ export default {
     return {
       label: null,
       amount: null,
-      movements: [
-        {
-          id: 1,
-          title: 'Movimiento',
-          description: 'Deposito de salario',
-          amount: 100,
-          date: new Date(),
-        },
-      ],
+      movements: [],
     };
   },
   computed: {
@@ -70,18 +65,36 @@ export default {
         .map((item) => item.amount);
 
       return lastDays.map((m, i) => {
-        const lastMovements = lastDays.slice(0, i);
+        const lastMovements = lastDays.slice(0, i + 1);
         return lastMovements.reduce((suma, movement) => (suma += movement), 0);
       });
     },
+    totalAmount() {
+      return this.movements.reduce((sum, next) => (sum += next.amount), 0);
+    },
+  },
+  mounted() {
+    const list = JSON.parse(localStorage.getItem('movements'));
+    this.movements = (list || []).map((item) => ({
+      ...item,
+      date: new Date(item.date),
+    }));
   },
   methods: {
     create(movement) {
       this.movements.push(movement);
+      this.save();
     },
     remove(id) {
       const index = this.movements.findIndex((item) => item.id === id);
       this.movements.splice(index, 1);
+      this.save();
+    },
+    save() {
+      localStorage.setItem('movements', JSON.stringify(this.movements));
+    },
+    select(item) {
+      this.amount = item;
     },
   },
 };

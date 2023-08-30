@@ -64,6 +64,10 @@ const submitForm = () => {
     amount: movementType.value === 'Ingreso' ? amount.value : -amount.value,
     date: new Date(),
   });
+  title.value = '';
+  amount.value = null;
+  description.value = '';
+  movementType.value = 'Ingreso';
 };
 </script>
 
